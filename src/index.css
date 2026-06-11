@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&family=Inter:wght@300;400;500;600&display=swap');
+/* Load both fonts with display=swap for performance. Caveat is the handwritten font.
+   On mobile, ensure it loads the same as desktop by specifying font-display and subset. */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&family=Inter:wght@300;400;500;600&display=swap&subset=latin');
 
 :root {
   --paper-bg: #faf9f6;
@@ -33,14 +35,35 @@ body {
   background-color: var(--paper-bg);
   color: var(--ink);
   transition: background-color 0.3s, color 0.3s;
+  /* Prevent font scaling on mobile orientation change */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
+/* Handwritten font — used for titles, numbers, answers */
 .handwritten {
   font-family: 'Caveat', cursive;
+  /* Force same rendering on all platforms */
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* Worksheet body font — used for labels, questions */
 .worksheet-font {
   font-family: 'Patrick Hand', cursive;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure handwritten font is consistent across mobile & desktop */
+@supports (font-family: 'Caveat') {
+  .handwritten {
+    font-family: 'Caveat', 'Comic Sans MS', cursive;
+  }
+  .worksheet-font {
+    font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+  }
 }
 
 /* Paper texture overlay */
@@ -63,7 +86,7 @@ body {
   background-position: 0 1.5rem;
 }
 
-/* Bubble styles */
+/* ── Bubble ──────────────────────────────────────────────────── */
 .bubble {
   width: 2rem;
   height: 2rem;
@@ -80,6 +103,7 @@ body {
   color: var(--ink-secondary);
   user-select: none;
   flex-shrink: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
 .bubble:hover {
@@ -100,7 +124,7 @@ body {
   color: var(--paper-bg);
 }
 
-/* Written input */
+/* ── Written input ───────────────────────────────────────────── */
 .worksheet-input {
   font-family: 'Caveat', cursive;
   font-size: 1.2rem;
@@ -112,18 +136,19 @@ body {
   color: var(--ink);
   padding: 0.1rem 0.2rem;
   transition: border-color 0.2s;
+  -webkit-font-smoothing: antialiased;
 }
 
 .worksheet-input:focus {
   border-bottom-color: var(--ink-secondary);
 }
 
-/* Scrollbar */
+/* ── Scrollbar ───────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--paper-line); border-radius: 3px; }
 
-/* Circular progress */
+/* ── Circular progress ───────────────────────────────────────── */
 .progress-ring-bg { stroke: var(--paper-line); }
 .progress-ring-fill { 
   transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -131,7 +156,7 @@ body {
   transform-origin: 50% 50%;
 }
 
-/* Check/Wrong buttons */
+/* ── Check/Wrong buttons ─────────────────────────────────────── */
 .check-btn {
   padding: 0.15rem 0.5rem;
   border-radius: 4px;
@@ -156,4 +181,19 @@ body {
 .check-btn.wrong.active {
   background-color: var(--wrong);
   color: white;
+}
+
+/* ── Mobile font size safety ─────────────────────────────────── */
+@media (max-width: 640px) {
+  .handwritten {
+    /* Ensure Caveat renders at readable size on mobile */
+    font-size-adjust: 0.5;
+  }
+  .worksheet-font {
+    font-size-adjust: 0.5;
+  }
+  /* Bump up base handwritten size slightly on small screens */
+  .handwritten.text-2xl { font-size: 1.6rem; }
+  .handwritten.text-3xl { font-size: 2rem; }
+  .handwritten.text-4xl { font-size: 2.4rem; }
 }

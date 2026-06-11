@@ -25,6 +25,7 @@ const NewWorksheet: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [config, setConfig] = useState<WorksheetConfig>({
     title: '',
     worksheetNumber: 1,
@@ -41,10 +42,15 @@ const NewWorksheet: React.FC = () => {
   };
 
   const handleCreate = async () => {
-    if (!user || !config.title.trim()) return;
+    if (!user) { setError('Not signed in.'); return; }
+    if (!config.title.trim()) { setError('Please enter an exam title.'); return; }
+    if (config.numQuestions < 1 || config.numQuestions > 500) {
+      setError('Number of questions must be between 1 and 500.');
+      return;
+    }
+    setError('');
     setLoading(true);
     try {
-      // Build initial answers array
       const answers: QuestionAnswer[] = Array.from({ length: config.numQuestions }, (_, i) => ({
         questionNumber: i + 1,
         selectedChoice: undefined,
@@ -65,6 +71,7 @@ const NewWorksheet: React.FC = () => {
       navigate(`/worksheet/${id}`);
     } catch (err) {
       console.error(err);
+      setError('Failed to create worksheet. Check your connection.');
     } finally {
       setLoading(false);
     }
@@ -107,7 +114,7 @@ const NewWorksheet: React.FC = () => {
           />
         </div>
 
-        {/* Number & Category */}
+        {/* Worksheet # & Category */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <SectionLabel>Worksheet #</SectionLabel>
@@ -144,22 +151,30 @@ const NewWorksheet: React.FC = () => {
           </div>
         </div>
 
-        {/* Bubble options */}
-        {config.answerType === 'bubble' && (
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <SectionLabel>Number of Questions</SectionLabel>
-              <select
-                value={config.numQuestions}
-                onChange={(e) => set('numQuestions', parseInt(e.target.value))}
-                className={inputClass}
-                style={inputStyle}
-              >
-                {[10, 15, 20, 25, 30, 40, 50, 75, 100].map((n) => (
-                  <option key={n} value={n}>{n} questions</option>
-                ))}
-              </select>
-            </div>
+        {/* Number of questions — always manual input */}
+        <div className={config.answerType === 'bubble' ? 'grid grid-cols-2 gap-4' : ''}>
+          <div>
+            <SectionLabel>Number of Questions</SectionLabel>
+            <input
+              type="number"
+              min={1}
+              max={500}
+              value={config.numQuestions}
+              onChange={(e) => {
+                const val = parseInt(e.target.value);
+                if (!isNaN(val)) set('numQuestions', val);
+              }}
+              placeholder="e.g. 50"
+              className={inputClass}
+              style={inputStyle}
+            />
+            <p className="text-xs mt-1" style={{ color: 'var(--ink-secondary)' }}>
+              Enter any number (1–500)
+            </p>
+          </div>
+
+          {/* Choices — only for bubble */}
+          {config.answerType === 'bubble' && (
             <div>
               <SectionLabel>Choices per Question</SectionLabel>
               <select
@@ -174,46 +189,41 @@ const NewWorksheet: React.FC = () => {
                 <option value={5}>5 choices (A–E)</option>
               </select>
             </div>
-          </div>
-        )}
-
-        {/* Written options */}
-        {config.answerType === 'written' && (
-          <div>
-            <SectionLabel>Number of Questions</SectionLabel>
-            <select
-              value={config.numQuestions}
-              onChange={(e) => set('numQuestions', parseInt(e.target.value))}
-              className={inputClass}
-              style={inputStyle}
-            >
-              {[5, 10, 15, 20, 25, 30, 40, 50].map((n) => (
-                <option key={n} value={n}>{n} questions</option>
-              ))}
-            </select>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Timed mode */}
         <div className="rounded-xl border p-4" style={{ borderColor: 'var(--paper-line)' }}>
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-center gap-4">
+            <div className="flex-1 min-w-0">
               <p className="worksheet-font font-semibold text-sm" style={{ color: 'var(--ink)' }}>Timed Mode</p>
               <p className="text-xs mt-0.5" style={{ color: 'var(--ink-secondary)' }}>
                 Auto-submit when time runs out
               </p>
             </div>
+            {/* Toggle — fixed alignment */}
             <button
               onClick={() => set('timedMode', !config.timedMode)}
-              className="w-12 h-6 rounded-full transition-colors relative flex-shrink-0"
-              style={{ backgroundColor: config.timedMode ? 'var(--accent-blue)' : 'var(--paper-line)' }}
+              role="switch"
+              aria-checked={config.timedMode}
+              className="relative inline-flex items-center flex-shrink-0 rounded-full transition-colors duration-200"
+              style={{
+                width: '44px',
+                height: '24px',
+                backgroundColor: config.timedMode ? 'var(--accent-blue)' : 'var(--paper-line)',
+              }}
             >
               <span
-                className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
-                style={{ transform: config.timedMode ? 'translateX(24px)' : 'translateX(2px)' }}
+                className="inline-block rounded-full bg-white shadow-sm transition-transform duration-200"
+                style={{
+                  width: '18px',
+                  height: '18px',
+                  transform: config.timedMode ? 'translateX(23px)' : 'translateX(3px)',
+                }}
               />
             </button>
           </div>
+
           {config.timedMode && (
             <div className="mt-4">
               <SectionLabel>Time Limit (minutes)</SectionLabel>
@@ -231,17 +241,17 @@ const NewWorksheet: React.FC = () => {
           )}
         </div>
 
-        {/* Preview */}
-        {config.answerType === 'bubble' && (
+        {/* Bubble preview */}
+        {config.answerType === 'bubble' && config.numQuestions > 0 && (
           <div className="rounded-xl p-4 border" style={{ borderColor: 'var(--paper-line)', backgroundColor: 'var(--paper-bg)' }}>
             <p className="text-xs mb-3 font-semibold" style={{ color: 'var(--ink-secondary)' }}>PREVIEW</p>
             <div className="flex items-center gap-3">
               <span className="worksheet-font text-sm w-6 text-right flex-shrink-0" style={{ color: 'var(--ink)' }}>1.</span>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {Array.from({ length: config.numChoices }, (_, i) => {
                   const letter = String.fromCharCode(65 + i);
                   return (
-                    <div key={letter} className="bubble" style={{ opacity: 1 }}>{letter}</div>
+                    <div key={letter} className="bubble">{letter}</div>
                   );
                 })}
               </div>
@@ -249,15 +259,23 @@ const NewWorksheet: React.FC = () => {
           </div>
         )}
 
+        {/* Error */}
+        {error && (
+          <p className="text-xs py-2 px-3 rounded-lg"
+            style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}>
+            {error}
+          </p>
+        )}
+
         {/* Submit */}
         <button
           onClick={handleCreate}
-          disabled={!config.title.trim() || loading}
+          disabled={!config.title.trim() || loading || config.numQuestions < 1}
           className="w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-opacity"
           style={{
             backgroundColor: 'var(--ink)',
             color: 'var(--paper-bg)',
-            opacity: !config.title.trim() || loading ? 0.5 : 1,
+            opacity: (!config.title.trim() || loading || config.numQuestions < 1) ? 0.5 : 1,
           }}
         >
           <span className="worksheet-font">
