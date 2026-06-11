@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --paper-bg: #faf9f6;
+  --paper-line: #e8e4d9;
+  --ink: #1a1a2e;
+  --ink-secondary: #4a4a6a;
+  --pencil: #2c2c54;
+  --accent-blue: #3b82f6;
+  --accent-purple: #8b5cf6;
+  --accent-green: #10b981;
+  --accent-orange: #f59e0b;
+  --correct: #10b981;
+  --wrong: #ef4444;
+  --bubble-hover: #dbeafe;
+}
+
+.dark {
+  --paper-bg: #1e1e2e;
+  --paper-line: #2d2d42;
+  --ink: #e8e6f0;
+  --ink-secondary: #9d9db5;
+  --pencil: #c8c8e0;
+  --bubble-hover: #312e81;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--paper-bg);
+  color: var(--ink);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.handwritten {
+  font-family: 'Caveat', cursive;
+}
+
+.worksheet-font {
+  font-family: 'Patrick Hand', cursive;
+}
+
+/* Paper texture overlay */
+.paper-texture::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(ellipse at 20% 50%, rgba(120, 119, 198, 0.03) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  z-index: 1000;
+}
+
+/* Ruled paper lines */
+.ruled-paper {
+  background-image: 
+    linear-gradient(var(--paper-line) 1px, transparent 1px);
+  background-size: 100% 2.5rem;
+  background-position: 0 1.5rem;
+}
+
+/* Bubble styles */
+.bubble {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid var(--ink-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-secondary);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.bubble:hover {
+  border-color: var(--accent-blue);
+  background-color: var(--bubble-hover);
+  color: var(--accent-blue);
+}
+
+.bubble.selected {
+  background-color: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper-bg);
+}
+
+.dark .bubble.selected {
+  background-color: var(--ink);
+  border-color: var(--pencil);
+  color: var(--paper-bg);
+}
+
+/* Written input */
+.worksheet-input {
+  font-family: 'Caveat', cursive;
+  font-size: 1.2rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--paper-line);
+  outline: none;
+  width: 100%;
+  color: var(--ink);
+  padding: 0.1rem 0.2rem;
+  transition: border-color 0.2s;
+}
+
+.worksheet-input:focus {
+  border-bottom-color: var(--ink-secondary);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--paper-line); border-radius: 3px; }
+
+/* Circular progress */
+.progress-ring-bg { stroke: var(--paper-line); }
+.progress-ring-fill { 
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* Check/Wrong buttons */
+.check-btn {
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid;
+  transition: all 0.15s;
+}
+.check-btn.correct {
+  border-color: var(--correct);
+  color: var(--correct);
+}
+.check-btn.correct.active {
+  background-color: var(--correct);
+  color: white;
+}
+.check-btn.wrong {
+  border-color: var(--wrong);
+  color: var(--wrong);
+}
+.check-btn.wrong.active {
+  background-color: var(--wrong);
+  color: white;
+}
