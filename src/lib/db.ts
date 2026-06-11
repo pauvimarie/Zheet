@@ -23,12 +23,17 @@ export const createWorksheet = async (
   userId: string,
   session: Omit<WorksheetSession, 'id'>
 ): Promise<string> => {
+
+  console.log("userId:", userId);
+  console.log("session:", session);
+
   const ref = await addDoc(collection(db, 'worksheets'), {
     ...session,
     userId,
     startedAt: serverTimestamp(),
     createdAt: serverTimestamp(),
   });
+
   return ref.id;
 };
 
