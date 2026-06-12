@@ -32,7 +32,7 @@ const StatCard: React.FC<{ label: string; value: string | number; icon: React.Re
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const [stats, setStats] = useState<UserStats>(DEFAULT_STATS());
+  const [stats, setStats] = useState<UserStats>(DEFAULT_STATS);
   const [recentWorksheets, setRecentWorksheets] = useState<WorksheetSession[]>([]);
 
   useEffect(() => {

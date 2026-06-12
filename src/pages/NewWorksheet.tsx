@@ -42,15 +42,30 @@ const NewWorksheet: React.FC = () => {
   };
 
   const handleCreate = async () => {
-    if (!user) { setError('Not signed in.'); return; }
-    if (!config.title.trim()) { setError('Please enter an exam title.'); return; }
-    if (config.numQuestions < 1 || config.numQuestions > 500) {
-      setError('Number of questions must be between 1 and 500.');
+    // Clear previous errors
+    setError('');
+
+    // Validation: User authentication
+    if (!user) {
+      setError('Please sign in first.');
       return;
     }
-    setError('');
+
+    // Validation: Title
+    if (!config.title || !config.title.trim()) {
+      setError('Please enter an exam title.');
+      return;
+    }
+
+    // Validation: Number of questions
+    if (!Number.isInteger(config.numQuestions) || config.numQuestions < 1 || config.numQuestions > 500) {
+      setError('Number of questions must be a whole number between 1 and 500.');
+      return;
+    }
+
     setLoading(true);
     try {
+      // Build the answers array with all required fields
       const answers: QuestionAnswer[] = Array.from({ length: config.numQuestions }, (_, i) => ({
         questionNumber: i + 1,
         selectedChoice: undefined,
@@ -58,7 +73,8 @@ const NewWorksheet: React.FC = () => {
         status: null,
       }));
 
-      const id = await createWorksheet(user.uid, {
+      // Create the worksheet session object
+      const sessionData = {
         userId: user.uid,
         config,
         answers,
@@ -67,11 +83,24 @@ const NewWorksheet: React.FC = () => {
         correct: 0,
         wrong: 0,
         checked: 0,
-      });
+      };
+
+      console.log('[NewWorksheet] Creating worksheet with data:', sessionData);
+
+      // Call the database function
+      const id = await createWorksheet(user.uid, sessionData);
+
+      // Navigate to the worksheet if successful
       navigate(`/worksheet/${id}`);
     } catch (err) {
-      console.error(err);
-      setError('Failed to create worksheet. Check your connection.');
+      console.error('[NewWorksheet] Error creating worksheet:', err);
+      
+      // Provide user-friendly error message
+      if (err instanceof Error) {
+        setError(`Error: ${err.message}`);
+      } else {
+        setError('Failed to create worksheet. Please check your connection and try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -151,7 +180,7 @@ const NewWorksheet: React.FC = () => {
           </div>
         </div>
 
-        {/* Number of questions — always manual input */}
+        {/* Number of questions — MANUAL INPUT (not dropdown) */}
         <div className={config.answerType === 'bubble' ? 'grid grid-cols-2 gap-4' : ''}>
           <div>
             <SectionLabel>Number of Questions</SectionLabel>
@@ -159,12 +188,14 @@ const NewWorksheet: React.FC = () => {
               type="number"
               min={1}
               max={500}
-              value={config.numQuestions}
-              onChange={(e) => {
-                const val = parseInt(e.target.value);
-                if (!isNaN(val)) set('numQuestions', val);
-              }}
               placeholder="e.g. 50"
+              value={config.numQuestions === 0 ? '' : config.numQuestions}
+              onChange={(e) => {
+                const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
+                if (!isNaN(val)) {
+                  set('numQuestions', val);
+                }
+              }}
               className={inputClass}
               style={inputStyle}
             />
@@ -179,7 +210,7 @@ const NewWorksheet: React.FC = () => {
               <SectionLabel>Choices per Question</SectionLabel>
               <select
                 value={config.numChoices}
-                onChange={(e) => set('numChoices', parseInt(e.target.value))}
+                onChange={(e) => set('numChoices', parseInt(e.target.value, 10))}
                 className={inputClass}
                 style={inputStyle}
               >
@@ -201,7 +232,7 @@ const NewWorksheet: React.FC = () => {
                 Auto-submit when time runs out
               </p>
             </div>
-            {/* Toggle — fixed alignment */}
+            {/* Toggle — fixed alignment with proper positioning */}
             <button
               onClick={() => set('timedMode', !config.timedMode)}
               role="switch"
@@ -229,7 +260,7 @@ const NewWorksheet: React.FC = () => {
               <SectionLabel>Time Limit (minutes)</SectionLabel>
               <select
                 value={config.timeLimit}
-                onChange={(e) => set('timeLimit', parseInt(e.target.value))}
+                onChange={(e) => set('timeLimit', parseInt(e.target.value, 10))}
                 className={inputClass}
                 style={inputStyle}
               >
@@ -245,13 +276,34 @@ const NewWorksheet: React.FC = () => {
         {config.answerType === 'bubble' && config.numQuestions > 0 && (
           <div className="rounded-xl p-4 border" style={{ borderColor: 'var(--paper-line)', backgroundColor: 'var(--paper-bg)' }}>
             <p className="text-xs mb-3 font-semibold" style={{ color: 'var(--ink-secondary)' }}>PREVIEW</p>
-            <div className="flex items-center gap-3">
-              <span className="worksheet-font text-sm w-6 text-right flex-shrink-0" style={{ color: 'var(--ink)' }}>1.</span>
-              <div className="flex gap-2 flex-wrap">
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="worksheet-font text-sm flex-shrink-0" style={{ color: 'var(--ink)' }}>Q. 1</span>
+              <div className="flex gap-2">
                 {Array.from({ length: config.numChoices }, (_, i) => {
                   const letter = String.fromCharCode(65 + i);
                   return (
-                    <div key={letter} className="bubble">{letter}</div>
+                    <div
+                      key={letter}
+                      className="bubble"
+                      style={{
+                        width: '2rem',
+                        height: '2rem',
+                        borderRadius: '50%',
+                        border: `2px solid var(--ink-secondary)`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                        fontFamily: "'Patrick Hand', cursive",
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        color: 'var(--ink-secondary)',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {letter}
+                    </div>
                   );
                 })}
               </div>
@@ -259,15 +311,21 @@ const NewWorksheet: React.FC = () => {
           </div>
         )}
 
-        {/* Error */}
+        {/* Error message display */}
         {error && (
-          <p className="text-xs py-2 px-3 rounded-lg"
-            style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}>
+          <div
+            className="rounded-lg p-3 text-sm"
+            style={{
+              backgroundColor: '#fef2f2',
+              color: '#dc2626',
+              borderLeft: '4px solid #dc2626',
+            }}
+          >
             {error}
-          </p>
+          </div>
         )}
 
-        {/* Submit */}
+        {/* Submit button */}
         <button
           onClick={handleCreate}
           disabled={!config.title.trim() || loading || config.numQuestions < 1}
@@ -276,12 +334,13 @@ const NewWorksheet: React.FC = () => {
             backgroundColor: 'var(--ink)',
             color: 'var(--paper-bg)',
             opacity: (!config.title.trim() || loading || config.numQuestions < 1) ? 0.5 : 1,
+            cursor: (!config.title.trim() || loading || config.numQuestions < 1) ? 'not-allowed' : 'pointer',
           }}
         >
           <span className="worksheet-font">
             {loading ? 'Creating…' : 'Start Worksheet'}
           </span>
-          <ChevronRight size={16} />
+          {!loading && <ChevronRight size={16} />}
         </button>
       </div>
     </div>
