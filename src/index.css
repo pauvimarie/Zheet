@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-/* Load both fonts with display=swap for performance. Caveat is the handwritten font.
-   On mobile, ensure it loads the same as desktop by specifying font-display and subset. */
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&family=Inter:wght@300;400;500;600&display=swap&subset=latin');
 
 :root {
@@ -28,65 +26,57 @@
   --bubble-hover: #312e81;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--paper-bg);
   color: var(--ink);
   transition: background-color 0.3s, color 0.3s;
-  /* Prevent font scaling on mobile orientation change */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 
-/* Handwritten font — used for titles, numbers, answers */
+/* ── Fonts ───────────────────────────────────────── */
+
 .handwritten {
-  font-family: 'Caveat', cursive;
-  /* Force same rendering on all platforms */
+  font-family: 'Caveat', 'Comic Sans MS', cursive;
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Worksheet body font — used for labels, questions */
 .worksheet-font {
-  font-family: 'Patrick Hand', cursive;
+  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Ensure handwritten font is consistent across mobile & desktop */
-@supports (font-family: 'Caveat') {
-  .handwritten {
-    font-family: 'Caveat', 'Comic Sans MS', cursive;
-  }
-  .worksheet-font {
-    font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
-  }
-}
+/* ── Paper texture ───────────────────────────────────────── */
 
-/* Paper texture overlay */
 .paper-texture::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background-image: 
+  background-image:
     radial-gradient(ellipse at 20% 50%, rgba(120, 119, 198, 0.03) 0%, transparent 50%),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
   z-index: 1000;
 }
 
-/* Ruled paper lines */
+/* ── Ruled paper ───────────────────────────────────────── */
+
 .ruled-paper {
-  background-image: 
-    linear-gradient(var(--paper-line) 1px, transparent 1px);
+  background-image: linear-gradient(var(--paper-line) 1px, transparent 1px);
   background-size: 100% 2.5rem;
   background-position: 0 1.5rem;
 }
 
-/* ── Bubble ──────────────────────────────────────────────────── */
+/* ── Bubble ───────────────────────────────────────── */
+
 .bubble {
   width: 2rem;
   height: 2rem;
@@ -97,13 +87,12 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: all 0.15s ease;
-  font-family: 'Patrick Hand', cursive;
+  font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--ink-secondary);
   user-select: none;
   flex-shrink: 0;
-  -webkit-font-smoothing: antialiased;
 }
 
 .bubble:hover {
@@ -124,9 +113,10 @@ body {
   color: var(--paper-bg);
 }
 
-/* ── Written input ───────────────────────────────────────────── */
+/* ── Input ───────────────────────────────────────── */
+
 .worksheet-input {
-  font-family: 'Caveat', cursive;
+  font-family: 'Caveat', 'Comic Sans MS', cursive;
   font-size: 1.2rem;
   background: transparent;
   border: none;
@@ -136,27 +126,41 @@ body {
   color: var(--ink);
   padding: 0.1rem 0.2rem;
   transition: border-color 0.2s;
-  -webkit-font-smoothing: antialiased;
 }
 
 .worksheet-input:focus {
   border-bottom-color: var(--ink-secondary);
 }
 
-/* ── Scrollbar ───────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--paper-line); border-radius: 3px; }
+/* ── Scrollbar ───────────────────────────────────────── */
 
-/* ── Circular progress ───────────────────────────────────────── */
-.progress-ring-bg { stroke: var(--paper-line); }
-.progress-ring-fill { 
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--paper-line);
+  border-radius: 3px;
+}
+
+/* ── Progress ───────────────────────────────────────── */
+
+.progress-ring-bg {
+  stroke: var(--paper-line);
+}
+
+.progress-ring-fill {
   transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
 }
 
-/* ── Check/Wrong buttons ─────────────────────────────────────── */
+/* ── Buttons ───────────────────────────────────────── */
+
 .check-btn {
   padding: 0.15rem 0.5rem;
   border-radius: 4px;
@@ -166,56 +170,33 @@ body {
   border: 1.5px solid;
   transition: all 0.15s;
 }
+
 .check-btn.correct {
   border-color: var(--correct);
   color: var(--correct);
 }
+
 .check-btn.correct.active {
   background-color: var(--correct);
   color: white;
 }
+
 .check-btn.wrong {
   border-color: var(--wrong);
   color: var(--wrong);
 }
+
 .check-btn.wrong.active {
   background-color: var(--wrong);
   color: white;
 }
 
-/* ── Mobile font size safety ─────────────────────────────────── */
-@media (max-width: 640px) {
-  .handwritten {
-    /* Ensure Caveat renders at readable size on mobile */
-    font-size-adjust: 0.5;
-  }
-  .worksheet-font {
-    font-size-adjust: 0.5;
-  }
-  /* Bump up base handwritten size slightly on small screens */
-  .handwritten.text-2xl { font-size: 1.6rem; }
-  .handwritten.text-3xl { font-size: 2rem; }
-  .handwritten.text-4xl { font-size: 2.4rem; }
-}
+/* ───────────────────────────────────────── */
+/* ✅ FINAL FIX: FORCE COMIC SANS ON MOBILE */
+/* ───────────────────────────────────────── */
 
-/* ── Comic Sans on mobile (Android & iOS) only ───────────────── */
-/*
-  pointer: coarse  → touch screens (Android, iOS)
-  hover: none      → no mouse hover = mobile device
-  Combined they reliably target phones/tablets, not desktops.
-*/
-@media (pointer: coarse) and (hover: none) {
-  body,
-  .worksheet-font,
-  input,
-  select,
-  textarea,
-  button {
-    font-family: 'Comic Sans MS', 'Comic Sans', cursive !important;
-  }
-
-  /* Handwritten titles keep Comic Sans as well */
-  .handwritten {
-    font-family: 'Comic Sans MS', 'Comic Sans', cursive !important;
+@media (max-width: 768px) {
+  * {
+    font-family: "Comic Sans MS", "Comic Sans", cursive !important;
   }
 }
