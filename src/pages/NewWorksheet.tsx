@@ -295,7 +295,7 @@ const NewWorksheet: React.FC = () => {
                         justifyContent: 'center',
                         cursor: 'pointer',
                         transition: 'all 0.15s ease',
-                        fontFamily: "'Patrick Hand', cursive",
+
                         fontSize: '0.85rem',
                         fontWeight: 600,
                         color: 'var(--ink-secondary)',
