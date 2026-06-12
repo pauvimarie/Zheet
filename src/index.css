@@ -197,3 +197,25 @@ body {
   .handwritten.text-3xl { font-size: 2rem; }
   .handwritten.text-4xl { font-size: 2.4rem; }
 }
+
+/* ── Comic Sans on mobile (Android & iOS) only ───────────────── */
+/*
+  pointer: coarse  → touch screens (Android, iOS)
+  hover: none      → no mouse hover = mobile device
+  Combined they reliably target phones/tablets, not desktops.
+*/
+@media (pointer: coarse) and (hover: none) {
+  body,
+  .worksheet-font,
+  input,
+  select,
+  textarea,
+  button {
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive !important;
+  }
+
+  /* Handwritten titles keep Comic Sans as well */
+  .handwritten {
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive !important;
+  }
+}
