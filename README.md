@@ -122,8 +122,7 @@ Recommended screenshots:
 
 **Paula Alvimarie M. Cruz**
 
-Computer Science Student
-Bataan Peninsula State University
+3rd Year Computer Science Student
 
 ---
 
