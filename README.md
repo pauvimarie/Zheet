@@ -125,6 +125,9 @@ Zheet provides an interactive digital review environment that allows users to:
 * Results/progress page
   <img width="1918" height="923" alt="Screenshot 2026-07-12 163207" src="https://github.com/user-attachments/assets/b3a51a76-49f6-44d3-a1cb-30cc5091f464" />
 
+* Library page
+  <img width="1918" height="928" alt="Screenshot 2026-07-12 163627" src="https://github.com/user-attachments/assets/58f1b5e0-dd44-4355-b90f-5c2e37842f03" />
+
 ---
 
 # 👩‍💻 Developer
