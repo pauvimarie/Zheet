@@ -1,72 +1,134 @@
-# Zheet — Digital Worksheet PWA
+# Zheet 📄✨
 
-A paper-feel digital worksheet and mock exam companion.
+## Digital Worksheet & Exam Review Companion
 
-## Setup
+Zheet is a digital exam review platform designed to help **Civil Service Professional Exam takers and students** improve their preparation through interactive worksheets, progress tracking, and performance analysis.
 
-### 1. Firebase Project
-1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Create a new project
-3. Enable **Authentication** → Email/Password
-4. Enable **Firestore Database**
-5. Enable **Hosting**
+Many exam takers prepare using physical review books, printed materials, or soft copies such as PDFs. While these resources provide valuable information, they often lack a way to track improvement, measure performance, and identify areas that need more practice.
 
-### 2. Configure Environment
-```bash
-cp .env.example .env
-```
-Fill in your Firebase config values in `.env`.
+Zheet transforms traditional review materials into an organized digital learning experience where users can practice, monitor progress, and prepare more effectively.
 
-### 3. Deploy Firestore Rules & Indexes
-```bash
-firebase login
-firebase use your-project-id
-firebase deploy --only firestore
-```
+---
 
-### 4. Install & Run
-```bash
-npm install
-npm run dev       # development
-npm run build     # production build
-```
+# 🚀 Live Demo
 
-### 5. Deploy to Firebase Hosting
-```bash
-firebase deploy --only hosting
-```
+🔗 https://zheet-6e550.web.app
 
-## Features
-- 📝 Bubble sheet & written answer worksheets
-- ⏱️ Timed exam mode with auto-submit
-- ✓/✗ Manual answer checking
-- 📊 Live accuracy tracking
-- 🔄 Real-time sync across all devices
-- 📱 PWA — installable on iOS, Android, desktop
-- 🌙 Light/dark mode
-- 📚 Worksheet library with search & filter
-- 📈 Category proficiency tracking (Verbal, Analytical, Numerical, General Information)
+---
 
-## Firestore Schema
+# 🎥 Project Demo Video
 
-```
-/worksheets/{id}
-  userId: string
-  config: WorksheetConfig
-  answers: QuestionAnswer[]
-  startedAt: Timestamp
-  completedAt?: Timestamp
-  timeTaken?: number
-  isComplete: boolean
-  correct: number
-  wrong: number
-  checked: number
+[Watch the Zheet Demo Video](YOUR_VIDEO_LINK)
 
-/stats/{userId}
-  totalWorksheets: number
-  totalQuestions: number
-  totalCorrect: number
-  totalWrong: number
-  overallAccuracy: number
-  proficiency: { [Category]: CategoryProficiency }
-```
+---
+
+# 🎯 Problem
+
+Exam preparation often relies on books, reviewers, and digital copies. However, learners commonly face challenges such as:
+
+* Difficulty tracking review progress
+* Lack of performance feedback
+* No organized record of practice attempts
+* Limited understanding of strengths and weak areas
+
+---
+
+# 💡 Solution
+
+Zheet provides an interactive digital review environment that allows users to:
+
+* Create and answer digital worksheets
+* Practice under timed conditions
+* Track performance over multiple attempts
+* Analyze learning progress through statistics and proficiency tracking
+
+---
+
+# ✨ Features
+
+## 📝 Digital Worksheets
+
+* Create personalized review worksheets
+* Supports different question categories:
+
+  * Verbal
+  * Analytical
+  * Numerical
+  * General Information
+* Timed review mode for exam simulation
+
+## 📊 Progress Tracking
+
+* Monitor worksheet performance
+* View accuracy statistics
+* Track category-based proficiency
+* Identify areas for improvement
+
+## 📚 Review History
+
+* Save completed worksheets
+* Review previous attempts
+* Maintain organized digital practice records
+
+## 🔐 Personalized Learning
+
+* Secure user authentication
+* Individual worksheet history
+* Personal progress dashboard
+
+## 📱 Progressive Web App
+
+* Installable on supported devices
+* Mobile-friendly interface
+* Accessible anytime for convenient reviewing
+
+---
+
+# 🛠️ Tech Stack
+
+## Frontend
+
+* React
+* TypeScript
+* Vite
+
+## Backend & Services
+
+* Firebase Authentication
+* Cloud Firestore
+* Firebase Hosting
+
+## Deployment
+
+* GitHub Actions
+
+---
+
+# 📸 Screenshots
+
+(Add screenshots here)
+
+Recommended screenshots:
+
+* Login page
+* Dashboard
+* Create Worksheet page
+* Answering interface
+* Results/progress page
+
+---
+
+# 👩‍💻 Developer
+
+**Paula Alvimarie M. Cruz**
+
+Computer Science Student
+Bataan Peninsula State University
+
+---
+
+# 🏆 Project Information
+
+Developed for the **OpenNova Hackathon**.
+
+Zheet aims to make exam preparation more organized, measurable, and accessible by combining traditional review methods with modern technology.
